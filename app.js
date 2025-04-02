@@ -86,6 +86,24 @@ app.get("/jc", (req, res) => {
     });
 });
 
+app.get("/hnvn", (req, res) => {
+    const filePath = "/home/\${USERNAME1}/domains/\${USERNAME}.serv00.net/logs/jh2.txt";
+    fs.readFile(filePath, "utf8", (err, data) => {
+        if (err) {
+            res.type("text/plain").send(`无法读取文件: ${err.message}`);
+            return;
+        }
+        // Lọc các URL chứa vmess:// và hysteria2://
+        const vmessPattern = /vmess:\/\/[^\n]+/g;
+        const hysteriaPattern = /hysteria2:\/\/[^\n]+/g;      
+        const vmessConfigs = data.match(vmessPattern) || [];
+        const hysteriaConfigs = data.match(hysteriaPattern) || [];
+        const allConfigs = [...vmessConfigs, ...hysteriaConfigs];
+        
+        res.type("text/plain").send(allConfigs.join("\n"));
+    });
+});
+
 app.use((req, res) => {
     res.status(404).send('请在浏览器地址：http://where.name.serv00.net 后面加三种路径功能：/up是保活，/re是重启，/rp是重置节点端口，/jc是查看当前系统进程，/list/你的uuid 是节点及订阅信息');
 });
