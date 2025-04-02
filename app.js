@@ -90,6 +90,39 @@ app.get("/jc", (req, res) => {
 
 
 
+app.get("/hnvnall", (req, res) => {
+    try {
+        const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
+        const USERNAME1 = execSync("whoami").toString().trim();
+        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh1.txt`;
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send(`文件不存在: ${filePath}`);
+        }
+
+        fs.readFile(filePath, "utf8", (err, data) => {
+            if (err) {
+                return res.status(500).send(`无法读取文件: ${err.message}`);
+            }
+
+            // Lọc URL chứa vmess:// và hysteria2://
+            const vmessPattern = /vmess:\/\/[^\n]+/g;
+            const hysteriaPattern = /hysteria2:\/\/[^\n]+/g;
+            const vmessConfigs = data.match(vmessPattern) || [];
+            const hysteriaConfigs = data.match(hysteriaPattern) || [];
+            const allConfigs = [...vmessConfigs, ...hysteriaConfigs];
+
+            if (allConfigs.length === 0) {
+                return res.status(404).send("未找到任何有效的 Vmess 或 Hysteria2 配置信息");
+            }
+
+            res.type("text/plain").send(allConfigs.join("\n"));
+        });
+    } catch (error) {
+        res.status(500).send(`服务器错误: ${error.message}`);
+    }
+});
+
 app.get("/hnvna", (req, res) => {
     try {
         const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
@@ -126,7 +159,7 @@ app.get("/hnvnh", (req, res) => {
     try {
         const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
         const USERNAME1 = execSync("whoami").toString().trim();
-        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh2.txt`;
+        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh1.txt`;
 
         if (!fs.existsSync(filePath)) {
             return res.status(404).send(`文件不存在: ${filePath}`);
