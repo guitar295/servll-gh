@@ -88,7 +88,12 @@ app.get("/jc", (req, res) => {
 });
 
 app.get("/hnvn", (req, res) => {
-    const filePath = "/home/\${USERNAME1}/domains/\${USERNAME}.serv00.net/logs/jh2.txt";
+    const filePath = `
+        USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
+        USERNAME1=$(whoami)
+        FULL_PATH="/home/\${USERNAME1}/domains/\${USERNAME}.serv00.net/logs/jh2.txt"
+        cat "\$FULL_PATH"
+    `;
     fs.readFile(filePath, "utf8", (err, data) => {
         if (err) {
             res.type("text/plain").send(`无法读取文件: ${err.message}`);
