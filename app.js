@@ -94,7 +94,7 @@ app.get("/hnvnall", (req, res) => {
     try {
         const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
         const USERNAME1 = execSync("whoami").toString().trim();
-        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh1.txt`;
+        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh.txt`;
 
         if (!fs.existsSync(filePath)) {
             return res.status(404).send(`文件不存在: ${filePath}`);
@@ -159,7 +159,7 @@ app.get("/hnvnh", (req, res) => {
     try {
         const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
         const USERNAME1 = execSync("whoami").toString().trim();
-        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh1.txt`;
+        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh.txt`;
 
         if (!fs.existsSync(filePath)) {
             return res.status(404).send(`文件不存在: ${filePath}`);
