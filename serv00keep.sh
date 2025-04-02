@@ -72,7 +72,7 @@ else
 echo "$UUID" > $WORKDIR/UUID.txt
 UUID=$(cat "$WORKDIR/UUID.txt" 2>/dev/null)
 fi
-curl -sL https://raw.githubusercontent.com/guitar295/servll-simple/sing-box-yg/main/app.js -o "$keep_path"/app.js
+curl -sL https://raw.githubusercontent.com/guitar295/servll-gh/main/app.js -o "$keep_path"/app.js
 sed -i '' "15s/name/$snb/g" "$keep_path"/app.js
 sed -i '' "59s/key/$UUID/g" "$keep_path"/app.js
 sed -i '' "90s/name/$USERNAME/g" "$keep_path"/app.js
