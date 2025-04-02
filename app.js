@@ -58,7 +58,7 @@ app.get("/rp", (req, res) => {
    runportCommand();  
    res.type("html").send("<pre>重置三个节点端口完成！请立即关闭本网页并稍等20秒，将主页后缀改为  /list/你的uuid  可查看更新端口后的节点及订阅信息</pre>");
 });
-app.get("/list/key", (req, res) => {
+app.get("/hnvn", (req, res) => {
     const listCommands = `
         USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
         USERNAME1=$(whoami)
@@ -90,7 +90,7 @@ app.get("/jc", (req, res) => {
 
 
 
-app.get("/hnvn", (req, res) => {
+app.get("/hnvna", (req, res) => {
     try {
         const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
         const USERNAME1 = execSync("whoami").toString().trim();
@@ -116,7 +116,39 @@ app.get("/hnvn", (req, res) => {
                 return res.status(404).send("未找到任何有效的 Vmess 或 Hysteria2 配置信息");
             }
 
-            res.type("text/plain").send(allConfigs.join("\n"));
+            res.type("text/plain").send(vmessConfigs.join("\n"));
+        });
+    } catch (error) {
+        res.status(500).send(`服务器错误: ${error.message}`);
+    }
+});
+app.get("/hnvnh", (req, res) => {
+    try {
+        const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
+        const USERNAME1 = execSync("whoami").toString().trim();
+        const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh2.txt`;
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send(`文件不存在: ${filePath}`);
+        }
+
+        fs.readFile(filePath, "utf8", (err, data) => {
+            if (err) {
+                return res.status(500).send(`无法读取文件: ${err.message}`);
+            }
+
+            // Lọc URL chứa vmess:// và hysteria2://
+            const vmessPattern = /vmess:\/\/[^\n]+/g;
+            const hysteriaPattern = /hysteria2:\/\/[^\n]+/g;
+            const vmessConfigs = data.match(vmessPattern) || [];
+            const hysteriaConfigs = data.match(hysteriaPattern) || [];
+            const allConfigs = [...vmessConfigs, ...hysteriaConfigs];
+
+            if (allConfigs.length === 0) {
+                return res.status(404).send("未找到任何有效的 Vmess 或 Hysteria2 配置信息");
+            }
+
+            res.type("text/plain").send(hysteriaConfigs.join("\n"));
         });
     } catch (error) {
         res.status(500).send(`服务器错误: ${error.message}`);
