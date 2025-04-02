@@ -88,12 +88,9 @@ app.get("/jc", (req, res) => {
 });
 
 app.get("/hnvn", (req, res) => {
-    const filePath = `
-        USERNAME=$(whoami | tr '[:upper:]' '[:lower:]')
-        USERNAME1=$(whoami)
-        FULL_PATH="/home/\${USERNAME1}/domains/\${USERNAME}.serv00.net/logs/jh2.txt"
-        cat "\$FULL_PATH"
-    `;
+    const USERNAME = execSync("whoami | tr '[:upper:]' '[:lower:]'").toString().trim();
+    const USERNAME1 = execSync("whoami").toString().trim();
+    const filePath = `/home/${USERNAME1}/domains/${USERNAME}.serv00.net/logs/jh2.txt`;
     fs.readFile(filePath, "utf8", (err, data) => {
         if (err) {
             res.type("text/plain").send(`无法读取文件: ${err.message}`);
