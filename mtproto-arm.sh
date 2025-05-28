@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 # === Thông tin ===
