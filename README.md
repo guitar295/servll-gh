@@ -60,6 +60,17 @@ sudo systemctl start docker
 
 Nếu không có lỗi gì ở B1 thì chuyển sang B2
 
+Đối với Máy chủ ARM:
+
+ + Clone source MTProto Proxy (bản gốc Alexbers)
+
+git clone https://github.com/alexbers/mtprotoproxy.git
+cd mtprotoproxy
++  Build Docker image cho kiến trúc ARM64
+
+docker build -t alexbers/mtprotoproxy:arm64 .
+⏳ Quá trình này sẽ mất 1–3 phút tùy máy. Sau khi hoàn tất, bạn sẽ thấy:
+Successfully tagged alexbers/mtprotoproxy:arm64
 
 
 B2:
