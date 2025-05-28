@@ -5,9 +5,7 @@ sudo apt-get update -y
 sudo apt-get install docker.io curl -y
 
 echo "✅ Khởi động Docker..."
-sudo systemctl unmask docker.service
-sudo systemctl unmask docker.socket
-sudo systemctl unmask containerd.service
+sudo systemctl unmask docker.service docker.socket containerd.service
 sudo systemctl restart containerd
 sudo systemctl start docker
 sudo systemctl enable docker
@@ -24,7 +22,7 @@ if [ "$(sudo docker ps -aq -f name=$CONTAINER_NAME)" ]; then
     sudo docker rm -f $CONTAINER_NAME
 fi
 
-echo "🚀 Khởi chạy MTProto Proxy trên PORT 8443..."
+echo "🚀 Khởi chạy MTProto Proxy ARM64 trên PORT 8443..."
 sudo docker run -d \
  --name=$CONTAINER_NAME \
  --restart=always \
@@ -33,13 +31,18 @@ sudo docker run -d \
  -p 8888:8443 \
  -e SECRET=$SECRET \
  -e TAG='myproxytag' \
- telegrammessenger/proxy
+ ghcr.io/alexbers/mtproxy
 
 sleep 3
 
 echo "📡 Đang lấy thông tin kết nối..."
-sudo docker logs $CONTAINER_NAME 2>&1 | grep -E 'tg://|t.me'
+IP=$(curl -s ifconfig.me)
+LINK="tg://proxy?server=$IP&port=8443&secret=$SECRET"
+LINK2="https://t.me/proxy?server=$IP&port=8443&secret=$SECRET"
 
 echo ""
 echo "✅ CÀI ĐẶT HOÀN TẤT!"
-echo "💡 Hãy sao chép link trên và mở trong Telegram để sử dụng."
+echo "💡 Dưới đây là link để bạn sử dụng trong Telegram:"
+echo ""
+echo "👉 $LINK"
+echo "👉 $LINK2"
