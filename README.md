@@ -4,6 +4,8 @@ bash <(curl -Ls https://raw.githubusercontent.com/guitar295/servll-gh/main/serv0
 Settup MTProto:
 
 curl -sL https://raw.githubusercontent.com/guitar295/servll-gh/refs/heads/main/mtproto.sh | bash
+
+
 curl -sL https://raw.githubusercontent.com/guitar295/servll-gh/refs/heads/main/mtproto-arm | bash
 
 
