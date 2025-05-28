@@ -1,6 +1,6 @@
 kfjladj;afj;af
 
-
+fad 
 Cách tải file về và ghi đè
 cat << 'EOF' | sudo tee /usr/local/bin/fetch-orc.sh > /dev/null
 #!/bin/bash
