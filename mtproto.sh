@@ -21,7 +21,7 @@ sudo docker run --platform linux/arm64/v8 -d \
   --restart always \
   -p 8443:443 \
   -e SECRET=$SECRET \
-  seriyps/mtproto-proxy
+  aerland/mtproto-proxy
 
 sleep 5
 
