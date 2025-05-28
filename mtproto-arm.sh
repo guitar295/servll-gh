@@ -4,7 +4,13 @@
 IMAGE_NAME="alexbers/mtprotoproxy:arm64"
 CONTAINER_NAME="mtproto-proxy-arm64"
 PORT="443"
-TAG="your_proxy_tag_here"  # <-- nếu có TAG từ @MTProxybot thì thay vào đây
+TAG=""  # <-- Thay bằng TAG thực nếu có
+
+# === Kiểm tra Docker ===
+if ! command -v docker &> /dev/null; then
+  echo "Docker chưa được cài đặt. Vui lòng cài đặt Docker trước khi chạy script này."
+  exit 1
+fi
 
 # === Tạo SECRET ngẫu nhiên ===
 SECRET=$(head -c 16 /dev/urandom | xxd -ps)
