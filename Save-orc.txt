@@ -6,7 +6,7 @@ cat << 'EOF' | sudo tee /usr/local/bin/fetch-orc.sh > /dev/null
 #!/bin/bash
 
 DEST="/home/ubuntu/Save-orc.txt"
-URL="https://raw.githubusercontent.com/guitar295/servll-gh/refs/heads/main/Save-orc.txt"
+URL="https://raw.githubusercontent.com/guitar295/servll-gh/main/Save-orc.txt"
 LOG="/var/log/fetch-orc.log"
 
 # Nếu log > 50KB thì xoay log
