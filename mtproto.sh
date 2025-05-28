@@ -1,83 +1,45 @@
 #!/bin/bash
 
-set -e
-
-# Cài đặt các dependencies
+echo "🔄 Cập nhật hệ thống và cài Docker..."
 sudo apt-get update -y
-sudo apt-get install -y git make gcc erlang-dev erlang-public-key erlang-ssl libssl-dev curl openssl
+sudo apt-get install docker.io curl -y
 
-# Tạo thư mục làm việc
-WORK_DIR="$HOME/mtproxy_build"
-mkdir -p "$WORK_DIR"
-cd "$WORK_DIR"
+echo "✅ Khởi động Docker..."
+sudo systemctl unmask docker.service
+sudo systemctl unmask docker.socket
+sudo systemctl unmask containerd.service
+sudo systemctl restart containerd
+sudo systemctl start docker
+sudo systemctl enable docker
 
-# Clone mã nguồn
-if [ ! -d "mtproto_proxy" ]; then
-  git clone https://github.com/seriyps/mtproto_proxy.git
+# Tạo SECRET ngẫu nhiên
+SECRET=$(head -c 16 /dev/urandom | xxd -ps)
+
+# Đặt tên container
+CONTAINER_NAME="mtproto-proxy"
+
+# Nếu container đã tồn tại, xóa trước để tránh lỗi
+if [ "$(sudo docker ps -aq -f name=$CONTAINER_NAME)" ]; then
+    echo "⚠️ Container $CONTAINER_NAME đã tồn tại. Đang xóa..."
+    sudo docker rm -f $CONTAINER_NAME
 fi
-cd mtproto_proxy
 
-# Build
-make
+echo "🚀 Khởi chạy MTProto Proxy trên PORT 8443..."
+sudo docker run -d \
+ --name=$CONTAINER_NAME \
+ --restart=always \
+ -p 8443:443 \
+ -p 80:80 \
+ -p 8888:8443 \
+ -e SECRET=$SECRET \
+ -e TAG='myproxytag' \
+ telegrammessenger/proxy
 
-# Tạo secret
-SECRET=ee$(openssl rand -hex 16)
-echo "SECRET: $SECRET"
+sleep 3
 
-# Tạo file cấu hình
-cat >config/prod-sys.config <<EOL
-[
- {mtproto_proxy,
-  [
-   {ports,
-    [
-     {8443,
-      [{secret, <<"$SECRET">>},
-       {tag, <<"proxy">>}]
-      }
-    ]}
-  ]},
-  {lager,
-   [
-    {log_root, "/var/log/mtproto-proxy"}
-   ]}
-].
-EOL
-
-# Tạo systemd service
-sudo tee /etc/systemd/system/mtproto-proxy.service > /dev/null <<EOL
-[Unit]
-Description=MTProto Proxy
-After=network.target
-
-[Service]
-Type=simple
-WorkingDirectory=$WORK_DIR/mtproto_proxy
-ExecStart=$WORK_DIR/mtproto_proxy/bin/mtproto-proxy run
-User=$USER
-Group=$USER
-Restart=always
-RestartSec=30
-
-[Install]
-WantedBy=multi-user.target
-EOL
-
-# Khởi động service
-sudo systemctl daemon-reload
-sudo systemctl enable mtproto-proxy
-sudo systemctl start mtproto-proxy
-
-# Lấy IP public
-IP=$(curl -s ifconfig.me)
+echo "📡 Đang lấy thông tin kết nối..."
+sudo docker logs $CONTAINER_NAME 2>&1 | grep -E 'tg://|t.me'
 
 echo ""
-echo "Proxy đã được cài đặt thành công!"
-echo "Link Telegram:"
-echo "tg://proxy?server=$IP&port=8443&secret=$SECRET"
-echo "https://t.me/proxy?server=$IP&port=8443&secret=$SECRET"
-echo ""
-echo "Để quản lý service:"
-echo "• Xem trạng thái: sudo systemctl status mtproto-proxy"
-echo "• Khởi động lại: sudo systemctl restart mtproto-proxy"
-echo "• Xem log: journalctl -u mtproto-proxy -f"
+echo "✅ CÀI ĐẶT HOÀN TẤT!"
+echo "💡 Hãy sao chép link trên và mở trong Telegram để sử dụng."
