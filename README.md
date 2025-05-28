@@ -218,6 +218,16 @@ sudo ufw status verbose
 
 # Đối với máy chủ ARM 
 
+🧪 Thực hiện toàn bộ bằng lệnh từng bước:
+🔹 BƯỚC 1: Cài Docker và Git (chạy 1 lần duy nhất)
+sudo apt-get update
+sudo apt-get install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+ 
+🔹 BƯỚC 2: Tạo MTProto Proxy và khởi chạy
+Chạy toàn bộ đoạn này một lần:
+
 bash
 CopyEdit
 # Biến tạm
@@ -235,12 +245,12 @@ cd mtprotoproxy
 
 # Ghi file cấu hình config.py
 cat > config.py <<EOF
-PORT=443
+PORT = 443
+
 USERS = {
     'default': '$SECRET'
 }
 EOF
-
 # Build image
 docker build -t $IMAGE_NAME .
 
@@ -256,5 +266,8 @@ docker run -d \
   -p 8443:8443 \
   $IMAGE_NAME
 
-
+# In link kết nối Telegram
+echo ""
+echo "✅ MTProto Proxy đã chạy!"
+echo "🔗 Link Telegram: tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}"
 
