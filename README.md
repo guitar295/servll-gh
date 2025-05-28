@@ -228,8 +228,6 @@ sudo systemctl enable docker
 🔹 BƯỚC 2: Tạo MTProto Proxy và khởi chạy
 Chạy toàn bộ đoạn này một lần:
 
-bash
-CopyEdit
 # Biến tạm
 SECRET=$(head -c 16 /dev/urandom | xxd -ps)
 IMAGE_NAME="mtproto-proxy-arm64"
