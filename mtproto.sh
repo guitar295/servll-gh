@@ -31,7 +31,7 @@ sudo docker run -d \
  -p 8888:8443 \
  -e SECRET=$SECRET \
  -e TAG='myproxytag' \
- ghcr.io/alexbers/mtproxy
+seriyps/mtproto-proxy:latest
 
 sleep 3
 
