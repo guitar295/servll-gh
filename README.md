@@ -7,9 +7,10 @@ curl -sL https://raw.githubusercontent.com/guitar295/servll-gh/refs/heads/main/m
 
 bash <(curl -Ls https://raw.githubusercontent.com/guitar295/servll-gh/main/mtproto-arm.sh)
 
+https://blog.iaman95.io.vn/2025/05/huong-dan-tao-proxy-truy-cap-telegram.html
+
 Lấy lại thông tin:
 
-sudo docker logs mtproto-proxy 2>&1 | grep -E 'tg://|t.me'
 
 HƯỚNG DẪN TẠO PROXY TRUY CẬP TELEGRAM
 5/26/2025 06:19:00 CH
