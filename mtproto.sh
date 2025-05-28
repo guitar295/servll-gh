@@ -1,48 +1,44 @@
 #!/bin/bash
 
-echo "🔄 Cập nhật hệ thống và cài Docker..."
-sudo apt-get update -y
-sudo apt-get install docker.io curl -y
+set -e
 
-echo "✅ Khởi động Docker..."
-sudo systemctl unmask docker.service docker.socket containerd.service
+echo "🔄 Cập nhật hệ thống và cài đặt Docker, curl, openssl..."
+sudo apt-get update -y
+sudo apt-get install -y docker.io curl openssl
+
+echo "✅ Khởi động và kích hoạt Docker..."
+sudo systemctl unmask docker.service docker.socket containerd.service || true
 sudo systemctl restart containerd
 sudo systemctl start docker
 sudo systemctl enable docker
 
-# Tạo SECRET ngẫu nhiên
-SECRET=$(head -c 16 /dev/urandom | xxd -ps)
+# Tạo SECRET định dạng chuẩn: 'ee' + 16 bytes hex
+SECRET=ee$(openssl rand -hex 16)
+echo "🔐 SECRET proxy: $SECRET"
 
-# Đặt tên container
-CONTAINER_NAME="mtproto-proxy"
-
-# Nếu container đã tồn tại, xóa trước để tránh lỗi
-if [ "$(sudo docker ps -aq -f name=$CONTAINER_NAME)" ]; then
-    echo "⚠️ Container $CONTAINER_NAME đã tồn tại. Đang xóa..."
-    sudo docker rm -f $CONTAINER_NAME
+# Xóa container cũ nếu có
+if sudo docker ps -a --format '{{.Names}}' | grep -q '^mtproto-proxy$'; then
+  echo "🧹 Xóa container cũ mtproto-proxy..."
+  sudo docker rm -f mtproto-proxy
 fi
 
-echo "🚀 Khởi chạy MTProto Proxy ARM64 trên PORT 8443..."
-sudo docker run -d \
- --name=$CONTAINER_NAME \
- --restart=always \
- -p 8443:443 \
- -p 80:80 \
- -p 8888:8443 \
- -e SECRET=$SECRET \
- -e TAG='myproxytag' \
-seriyps/mtproto-proxy:latest
+echo "🚀 Chạy MTProto Proxy trên cổng 8443, image hỗ trợ ARM64..."
 
-sleep 3
+sudo docker run --platform linux/arm64/v8 -d \
+  --name mtproto-proxy \
+  --restart always \
+  -p 8443:443 \
+  -e SECRET=$SECRET \
+  telegrammessenger/proxy:arm64
 
-echo "📡 Đang lấy thông tin kết nối..."
+sleep 5
+
 IP=$(curl -s ifconfig.me)
-LINK="tg://proxy?server=$IP&port=8443&secret=$SECRET"
-LINK2="https://t.me/proxy?server=$IP&port=8443&secret=$SECRET"
 
 echo ""
-echo "✅ CÀI ĐẶT HOÀN TẤT!"
-echo "💡 Dưới đây là link để bạn sử dụng trong Telegram:"
+echo "✅ Proxy đã chạy!"
+echo "Dùng các link sau để kết nối Telegram:"
+echo "tg://proxy?server=$IP&port=8443&secret=$SECRET"
+echo "https://t.me/proxy?server=$IP&port=8443&secret=$SECRET"
 echo ""
-echo "👉 $LINK"
-echo "👉 $LINK2"
+echo "📝 Kiểm tra trạng thái container với: sudo docker ps"
