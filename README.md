@@ -215,53 +215,46 @@ sudo ufw status verbose
 
 
 
-Đối với máy chủ ARM 
 
-#!/bin/bash
+# Đối với máy chủ ARM 
 
-# === Thông tin ===
-IMAGE_NAME="alexbers/mtprotoproxy:arm64"
-CONTAINER_NAME="mtproto-proxy-arm64"
-PORT="443"
-TAG="your_proxy_tag_here"  # <-- nếu có TAG từ @MTProxybot thì thay vào đây
-
-# === Tạo SECRET ngẫu nhiên ===
+bash
+CopyEdit
+# Biến tạm
 SECRET=$(head -c 16 /dev/urandom | xxd -ps)
+IMAGE_NAME="mtproto-proxy-arm64"
+CONTAINER_NAME="mtproto-proxy"
+PORT=443
+IP=$(curl -s ifconfig.me)
 
-# === In ra SECRET để tham khảo sau (nếu cần) ===
-echo "➡️  SECRET được tạo: $SECRET"
-echo "➡️  TAG sử dụng: $TAG"
-
-# === Clone mã nguồn nếu chưa có ===
+# Clone nếu chưa có
 if [ ! -d "mtprotoproxy" ]; then
   git clone https://github.com/alexbers/mtprotoproxy.git
 fi
-cd mtprotoproxy || exit 1
+cd mtprotoproxy
 
-# === Build image cho ARM64 ===
-echo "🛠️  Đang build Docker image..."
+# Ghi file cấu hình config.py
+cat > config.py <<EOF
+PORT=443
+USERS = {
+    'default': '$SECRET'
+}
+EOF
+
+# Build image
 docker build -t $IMAGE_NAME .
 
-# === Dừng và xóa container cũ (nếu có) ===
-docker stop $CONTAINER_NAME 2>/dev/null
-docker rm $CONTAINER_NAME 2>/dev/null
+# Xoá container cũ (nếu có)
+docker rm -f $CONTAINER_NAME 2>/dev/null
 
-# === Chạy container mới ===
-echo "🚀 Đang khởi chạy MTProto Proxy container..."
-docker run -d --name $CONTAINER_NAME \
+# Chạy container
+docker run -d \
+  --name $CONTAINER_NAME \
   --restart=always \
   -p ${PORT}:443 \
   -p 80:80 \
   -p 8443:8443 \
-  -e SECRET=$SECRET \
-  -e TAG=$TAG \
   $IMAGE_NAME
 
-# === Lấy địa chỉ IP công khai ===
-IP=$(curl -s https://api.ipify.org)
-
-# === In ra link kết nối Telegram ===
-echo "✅ Link Telegram Proxy:"
-echo "tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}"
 
 
