@@ -75,13 +75,13 @@ Mở terminal và gõ:
 
 
 sudo docker run -d \
- --name=iaman95-mtproto-telegram-proxy \
+ --name=Orc-mtproto \
  --restart=always \
  -p 443:443 \
  -p 80:80 \
  -p 8443:8443 \
  -e SECRET=$(head -c 16 /dev/urandom | xxd -ps) \
- -e TAG='iaman95-mtproto-telegram-proxy' \
+ -e TAG='Orc-mtproto' \
  telegrammessenger/proxy
 
 
@@ -105,10 +105,10 @@ Sau khi khởi tạo thành công, bạn tiến hành lấy thông tin kết n�
 Mở terminal và gõ:
 
 
-sudo docker logs iaman95-mtproto-telegram-proxy 2>&1 | grep secret
+sudo docker logs Orc-mtproto 2>&1 | grep secret
 
 
-<iaman95-mtproto-telegram-proxy> Chính là tên của Container của bạn
+<Orc-mtproto> Chính là tên của Container của bạn
 
 
 
