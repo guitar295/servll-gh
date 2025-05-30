@@ -23,3 +23,42 @@ sudo chmod +x /usr/local/bin/fetch-orc.sh
 
 # Thêm cron chạy mỗi giờ (nếu chưa có)
 (crontab -l 2>/dev/null | grep -v '/usr/local/bin/fetch-orc.sh'; echo "0 * * * * /usr/local/bin/fetch-orc.sh") | crontab -
+
+
+# Thêm cách nữa
+
+✅ 1. Script keepalive-oracle.sh
+
+#!/bin/bash
+
+LOG="/var/log/keepalive-oracle.log"
+
+# 1. Ping Google DNS
+ping -c 3 8.8.8.8 >> "$LOG"
+
+# 2. Tải một phần nhỏ của file lớn từ Hetzner (10KB)
+curl -s --range 0-9999 https://speed.hetzner.de/100MB.bin -o /dev/null
+
+# 3. Tạo hoạt động CPU nhẹ (tính số nguyên tố nhỏ)
+python3 -c "print([x for x in range(2, 5000) if all(x%y!=0 for y in range(2, int(x**0.5)+1))][-1])" >> "$LOG"
+
+echo "[$(date)] keepalive done" >> "$LOG"
+✅ 2. Các bước cài đặt trên VPS
+
+📌 Tạo file script:
+sudo nano /usr/local/bin/keepalive-oracle.sh
+→ Dán nội dung ở bước (1), sau đó Ctrl+O để lưu, Ctrl+X để thoát.
+
+📌 Cấp quyền thực thi:
+sudo chmod +x /usr/local/bin/keepalive-oracle.sh
+📌 Thêm cronjob chạy mỗi 30 phút:
+(crontab -l 2>/dev/null | grep -v 'keepalive-oracle.sh'; echo "*/30 * * * * /usr/local/bin/keepalive-oracle.sh") | crontab -
+✅ Kết quả:
+
+VPS tạo ra lưu lượng ping + download nhỏ (~10KB) mỗi 30 phút.
+Có hoạt động CPU nhẹ (tính toán).
+Có ghi log ra file → tác động đến ổ đĩa.
+Như vậy hệ thống Oracle Cloud sẽ nhận thấy VPS đang sử dụng thực sự.
+📌 Bạn có thể xem log hoạt động tại:
+
+cat /var/log/keepalive-oracle.log
