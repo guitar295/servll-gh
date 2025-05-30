@@ -138,35 +138,35 @@ Lưu ý: Đối với các VPS trên Azure, AWS, Google...các bạn kiểm tra 
 MỘT SỐ LỆNH LIÊN QUAN ĐẾN DOCKER
 
 
-# Dừng Container
+    # Dừng Container
 
 sudo docker stop <Tên container của bạn>
 
 sudo docker stop iaman95-mtproto-telegram-proxy
 
 
-# Đổi tên Container
+    # Đổi tên Container
 
 sudo docker rename <Tên container cũ> <Tên container mới>
 
 sudo docker rename mtproto-proxy iaman95-mtproto-telegram-proxy
 
 
-# Chạy Container
+    # Chạy Container
 
 sudo docker start <Tên container của bạn>
 
 sudo docker start iaman95-mtproto-telegram-proxy
 
 
-# Dừng Container
+    # Dừng Container
 
 sudo docker stop <Tên container của bạn>
 
 sudo docker stop iaman95-mtproto-telegram-proxy-container
 
 
-# Xoá container
+    # Xoá container
 
 sudo docker rm iaman95-mtproto-telegram-proxy-container
 
@@ -176,26 +176,25 @@ sudo docker rm iaman95-mtproto-telegram-proxy-container
 OPTIONAL: HƯỚNG DẪN FIREWALL TRÊN UBUNTU
 
 
-# Kiểm tra trạng thái Firewall
+    # Kiểm tra trạng thái Firewall
 
 sudo ufw status
 
 
 
-# Cài đặt (Nếu chưa có)
+    # Cài đặt (Nếu chưa có)
 
 sudo apt update
 sudo apt install ufw
 
 
 
-# Bật (Nếu đã cài đặt)
+    # Bật (Nếu đã cài đặt)
 
 sudo ufw enable
 
 
-
-# Cho phép Inbound các cổng 80, 443, 8443
+    # Cho phép Inbound các cổng 80, 443, 8443
 
 sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
@@ -203,18 +202,18 @@ sudo ufw allow 8443/tcp
 
 
 
-# Cho phép Outbound các cổng 80, 443, 8443
+    # Cho phép Outbound các cổng 80, 443, 8443
 
 sudo ufw default allow outgoing
 
-# Hoặc nếu đang chặn mặc định:
+    # Hoặc nếu đang chặn mặc định:
 sudo ufw allow out 80/tcp
 sudo ufw allow out 443/tcp
 sudo ufw allow out 8443/tcp
 
 
 
-# Kiểm tra
+    # Kiểm tra
 
 sudo ufw status verbose
 
