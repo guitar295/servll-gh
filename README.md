@@ -233,20 +233,20 @@ sudo systemctl enable docker
 🔹 BƯỚC 2: Tạo MTProto Proxy và khởi chạy
 Chạy toàn bộ đoạn này một lần:
 
-# Biến tạm
+    # Biến tạm
 SECRET=$(head -c 16 /dev/urandom | xxd -ps)
 IMAGE_NAME="mtproto-proxy-arm64"
 CONTAINER_NAME="mtproto-proxy"
 PORT=443
 IP=$(curl -s ifconfig.me)
 
-# Clone nếu chưa có
+    # Clone nếu chưa có
 if [ ! -d "mtprotoproxy" ]; then
   git clone https://github.com/alexbers/mtprotoproxy.git
 fi
 cd mtprotoproxy
 
-# Ghi file cấu hình config.py
+    # Ghi file cấu hình config.py
 cat > config.py <<EOF
 PORT = 443
 
@@ -272,13 +272,13 @@ MODES = {
     # TLS_DOMAIN = "www.google.com"
 
 EOF
-# Build image
+    # Build image
 docker build -t $IMAGE_NAME .
 
-# Xoá container cũ (nếu có)
+    # Xoá container cũ (nếu có)
 docker rm -f $CONTAINER_NAME 2>/dev/null
 
-# Chạy container
+    # Chạy container
 docker run -d \
   --name $CONTAINER_NAME \
   --restart=always \
@@ -287,7 +287,7 @@ docker run -d \
   -p 8443:8443 \
   $IMAGE_NAME
 
-# In link kết nối Telegram
+    # In link kết nối Telegram
 echo ""
 echo "✅ MTProto Proxy đã chạy!"
 echo "🔗 Link Telegram: tg://proxy?server=${IP}&port=${PORT}&secret=${SECRET}"
